@@ -1,0 +1,8 @@
+name: HavensGames-Minigames
+main: net.whg.minigames.MinigamesPlugin
+version: 0.1.0
+api-version: 1.17
+commands:
+  mg:
+    description: Minigame commands.
+    usage: /mg
