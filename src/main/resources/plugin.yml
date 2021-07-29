@@ -2,7 +2,11 @@ name: HavensGames-Minigames
 main: net.whg.minigames.MinigamesPlugin
 version: 0.1.0
 api-version: 1.17
+depend: [WorldEdit]
 commands:
   mg:
-    description: Minigame commands.
+    description: Minigame management commands.
     usage: /mg
+  arena:
+    description: Arena management commands.
+    usage: /arena
