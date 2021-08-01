@@ -13,10 +13,14 @@ public class RegionIterator {
         this.maxX = maxX;
         this.maxY = maxY;
         this.maxZ = maxZ;
+        reset();
+    }
 
-        this.x = minX;
-        this.y = minY;
-        this.z = minZ;
+    public void reset() {
+        x = minX;
+        y = minY;
+        z = minZ;
+        done = false;
     }
 
     public int getX() {
