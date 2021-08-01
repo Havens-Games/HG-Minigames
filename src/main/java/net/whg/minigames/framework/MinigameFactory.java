@@ -10,12 +10,38 @@ public interface MinigameFactory {
      * @param manager - The minigame manager instance that triggered this action.
      * @return The new minigame instance.
      */
-    public Minigame createInstance(MinigameManager manager);
+    Minigame createInstance(MinigameManager manager);
 
     /**
      * Gets the name of the minigame.
      * 
      * @return The minigame name.
      */
-    public String getName();
+    String getName();
+
+    /**
+     * Gets whether or not this minigame is instanced. Non-instanced minigames are
+     * created instantly upon registering them, and players are instantly added to
+     * them at any time. Instanced minigames are given a virtual lobby to join and
+     * all players join it at the same time.
+     * 
+     * @return True if the minigame is instanced. False if the minigame has only one
+     *         instance.
+     */
+    boolean isInstanced();
+
+    /**
+     * Gets the minimum number of players required to create a new minigame
+     * instance.
+     * 
+     * @return The minimum number of players to start this minigame.
+     */
+    int getMinPlayers();
+
+    /**
+     * Gets the maximum number of players allowed to join a new minigame instance.
+     * 
+     * @return The maximum number of players allowed into this minigame.
+     */
+    int getMaxPlayers();
 }

@@ -54,7 +54,6 @@ public abstract class Minigame implements Listener, Closeable {
             return;
 
         players.add(player);
-        manager.addPlayer(player, this);
     }
 
     /**
@@ -91,4 +90,22 @@ public abstract class Minigame implements Listener, Closeable {
      * @return The name.
      */
     public abstract String getName();
+
+    /**
+     * Gets the number of players currently in this minigame.
+     * 
+     * @return The number of players.
+     */
+    public int getSize() {
+        return players.size();
+    }
+
+    /**
+     * Gets a list of all players in this minigame. This list should not be edited.
+     * 
+     * @return The list of players in this minigame.
+     */
+    public List<Player> getPlayers() {
+        return players;
+    }
 }
