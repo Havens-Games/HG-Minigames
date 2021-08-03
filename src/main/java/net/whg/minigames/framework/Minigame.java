@@ -48,23 +48,17 @@ public abstract class Minigame implements Listener {
      *                                          minigame.
      */
     public final void addPlayer(Player player) throws PlayerAlreadyInMinigameException {
-        if (players.contains(player))
-            throw new PlayerAlreadyInMinigameException(player, this, this);
-
         var currentMinigame = manager.getCurrentMinigame(player);
         if (currentMinigame != null)
             throw new PlayerAlreadyInMinigameException(player, this, currentMinigame);
-
-        var event = new JoinMinigameEvent(player, this);
-        Bukkit.getPluginManager().callEvent(event);
-
-        if (event.isCancelled())
-            return;
 
         players.add(player);
 
         var invSnapshot = InventorySnapshot.createSnapshotAndClear(player);
         inventorySnapshots.put(player, invSnapshot);
+
+        var event = new JoinMinigameEvent(player, this);
+        Bukkit.getPluginManager().callEvent(event);
     }
 
     /**

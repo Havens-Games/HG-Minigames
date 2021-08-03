@@ -1,7 +1,6 @@
 package net.whg.minigames.framework.events;
 
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +11,7 @@ import net.whg.minigames.framework.Minigame;
  * An event that is thrown whenever a player tries to join a minigame. This is
  * called before the player actually joins the minigame.
  */
-public class JoinMinigameEvent extends Event implements Cancellable {
+public class JoinMinigameEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
     public static HandlerList getHandlerList() {
@@ -21,7 +20,6 @@ public class JoinMinigameEvent extends Event implements Cancellable {
 
     private final Player player;
     private final Minigame minigame;
-    private boolean cancelled = false;
 
     /**
      * Creates a new JoinMinigameEvent.
@@ -32,16 +30,6 @@ public class JoinMinigameEvent extends Event implements Cancellable {
     public JoinMinigameEvent(Player player, Minigame minigame) {
         this.player = player;
         this.minigame = minigame;
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
-    @Override
-    public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
     }
 
     @Override
