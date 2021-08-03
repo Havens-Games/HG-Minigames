@@ -1,8 +1,9 @@
 package net.whg.minigames.framework;
 
-import java.io.Closeable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -13,27 +14,34 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import net.whg.minigames.framework.events.JoinMinigameEvent;
 import net.whg.minigames.framework.events.LeaveMinigameEvent;
 import net.whg.minigames.framework.exceptions.PlayerAlreadyInMinigameException;
+import net.whg.utils.player.InventorySnapshot;
 
 /**
  * A minigame is a collection of event handlers that are enabled or disabled for
  * players depending on whether they are currently inside that minigame instance
  * or not.
  */
-public abstract class Minigame implements Listener, Closeable {
+public abstract class Minigame implements Listener {
     private final List<Player> players = new ArrayList<>();
+    private final Map<Player, InventorySnapshot> inventorySnapshots = new HashMap<>();
     private final MinigameManager manager;
+    private final MinigameID id;
 
     /**
      * Creates a new minigame instance.
      * 
      * @param manager - The minigame manager instance this minigame is bound to.
+     * @param id      - The minigame ID.
      */
-    protected Minigame(MinigameManager manager) {
+    protected Minigame(MinigameManager manager, MinigameID id) {
         this.manager = manager;
+        this.id = id;
     }
 
     /**
      * Adds a new player to this minigame. Calls a cancellable JoinMinigameEvent.
+     * This will also create a snapshot of the player's current inventory and stats,
+     * while clearing their inventory.
      * 
      * @param player - The player to add.
      * @throws PlayerAlreadyInMinigameException If the player is already in a
@@ -54,12 +62,16 @@ public abstract class Minigame implements Listener, Closeable {
             return;
 
         players.add(player);
+
+        var invSnapshot = InventorySnapshot.createSnapshotAndClear(player);
+        inventorySnapshots.put(player, invSnapshot);
     }
 
     /**
      * Removes a player from this minigame. Calls a LeaveMinigameEvent. This
      * function preforms no action is the player is not currently part of this
-     * minigame.
+     * minigame. This function will also restore the player's inventory that was
+     * saved before adding them to the minigame.
      * 
      * @param player - The player to remove.
      */
@@ -68,6 +80,10 @@ public abstract class Minigame implements Listener, Closeable {
             return;
 
         players.remove(player);
+
+        var invSnapshot = inventorySnapshots.get(player);
+        InventorySnapshot.apply(player, invSnapshot);
+        inventorySnapshots.remove(player);
 
         var event = new LeaveMinigameEvent(player, this);
         Bukkit.getPluginManager().callEvent(event);
@@ -85,13 +101,6 @@ public abstract class Minigame implements Listener, Closeable {
     }
 
     /**
-     * Gets the name of this minigame.
-     * 
-     * @return The name.
-     */
-    public abstract String getName();
-
-    /**
      * Gets the number of players currently in this minigame.
      * 
      * @return The number of players.
@@ -107,5 +116,14 @@ public abstract class Minigame implements Listener, Closeable {
      */
     public List<Player> getPlayers() {
         return players;
+    }
+
+    /**
+     * Gets the ID for this minigame.
+     * 
+     * @return The minigame ID.
+     */
+    public final MinigameID getID() {
+        return id;
     }
 }

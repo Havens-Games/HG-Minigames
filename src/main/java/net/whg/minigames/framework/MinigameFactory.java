@@ -8,9 +8,10 @@ public interface MinigameFactory {
      * Creates a new instance of the indicated minigame.
      * 
      * @param manager - The minigame manager instance that triggered this action.
+     * @param id      - The minigame ID.
      * @return The new minigame instance.
      */
-    Minigame createInstance(MinigameManager manager);
+    Minigame createInstance(MinigameManager manager, MinigameID id);
 
     /**
      * Gets the name of the minigame.

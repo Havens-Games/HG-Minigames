@@ -3,7 +3,7 @@ package net.whg.minigames.framework.exceptions;
 import org.bukkit.entity.Player;
 
 import net.whg.minigames.framework.Minigame;
-import net.whg.utils.CmdPlayer;
+import net.whg.utils.player.CmdPlayer;
 
 /**
  * Thrown whenever a player tries to join a minigame while already part of
@@ -18,7 +18,8 @@ public class PlayerAlreadyInMinigameException extends Exception {
     private final transient Minigame target;
 
     public PlayerAlreadyInMinigameException(Player player, Minigame current, Minigame target) {
-        super(String.format(CONSOLE_MESSAGE, player.getName(), target.getName(), current.getName()));
+        super(String.format(CONSOLE_MESSAGE, player.getName(), target.getID().getMinigameType(),
+                current.getID().getMinigameType()));
 
         this.player = player;
         this.current = current;
@@ -38,6 +39,6 @@ public class PlayerAlreadyInMinigameException extends Exception {
     }
 
     public void printToCommandSender(CmdPlayer sender) {
-        sender.sendError(PLAYER_MESSAGE, current.getName());
+        sender.sendError(PLAYER_MESSAGE, current.getID().getMinigameType());
     }
 }

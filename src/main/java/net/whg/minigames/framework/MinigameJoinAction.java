@@ -1,11 +1,11 @@
 package net.whg.minigames.framework;
 
 import net.whg.minigames.framework.exceptions.PlayerAlreadyInMinigameException;
-import net.whg.utils.CmdPlayer;
 import net.whg.utils.cmdformat.Subcommand;
 import net.whg.utils.exceptions.CommandException;
 import net.whg.utils.exceptions.NoConsoleException;
 import net.whg.utils.exceptions.UnknownArgumentException;
+import net.whg.utils.player.CmdPlayer;
 
 public class MinigameJoinAction extends Subcommand {
     private final MinigameManager minigameManager;
@@ -44,7 +44,7 @@ public class MinigameJoinAction extends Subcommand {
                 throw new UnknownArgumentException("%s does not have a lobby!", args[0]);
 
             minigameManager.removeFromAllMinigames(player);
-            var active = minigameManager.getActiveMinigame(args[0]);
+            var active = minigameManager.findActiveMinigame(args[0]);
 
             try {
                 active.addPlayer(player);
@@ -63,7 +63,7 @@ public class MinigameJoinAction extends Subcommand {
         if (factory.isInstanced())
             throw new UnknownArgumentException("%s is not a lobby game!", name);
 
-        return minigameManager.getActiveMinigame(name);
+        return minigameManager.findActiveMinigame(name);
     }
 
     @Override

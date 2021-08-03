@@ -1,13 +1,16 @@
 package net.whg.minigames.framework;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 
+import net.whg.minigames.framework.arena.ArenaDistributor;
 import net.whg.minigames.framework.events.JoinLobbyEvent;
 
 /**
@@ -19,6 +22,7 @@ public class MinigameManager {
     private final List<Minigame> activeMinigames = new ArrayList<>();
     private final List<VirtualLobby> lobbies = new ArrayList<>();
     private final Plugin plugin;
+    private final ArenaDistributor arenaDistributor;
 
     /**
      * Creates a new minigame manager.
@@ -27,6 +31,7 @@ public class MinigameManager {
      */
     public MinigameManager(Plugin plugin) {
         this.plugin = plugin;
+        arenaDistributor = new ArenaDistributor(plugin);
     }
 
     /**
@@ -60,11 +65,50 @@ public class MinigameManager {
         if (factory == null)
             return null;
 
-        var minigame = factory.createInstance(this);
+        var id = generateID(name);
+        var minigame = factory.createInstance(this, id);
         activeMinigames.add(minigame);
+
+        try {
+            arenaDistributor.getArena(id).buildArena();
+        } catch (IOException e) {
+            Bukkit.getLogger().log(Level.SEVERE, e, () -> "Failed to build arena for " + name + "!");
+        }
 
         Bukkit.getPluginManager().registerEvents(minigame, plugin);
         return minigame;
+    }
+
+    /**
+     * Generates an available MinigameID object for the given minigame type.
+     * 
+     * @param minigameType - The name of the minigame type.
+     * @return A new MinigameID.
+     */
+    private MinigameID generateID(String minigameType) {
+        var typeID = minigameTypes.indexOf(getMinigameFactory(minigameType));
+        var instanceID = 0;
+
+        while (findMinigame(typeID, instanceID) != null)
+            instanceID++;
+
+        return new MinigameID(minigameType, typeID, instanceID);
+    }
+
+    /**
+     * Finds the active minigame with the given type ID and instance ID.
+     * 
+     * @param typeID     - The type ID.
+     * @param instanceID - The instance ID.
+     * @return The active minigame, or null if the minigame could not be found.
+     */
+    private Minigame findMinigame(int typeID, int instanceID) {
+        for (var minigame : activeMinigames) {
+            var id = minigame.getID();
+            if (id.getTypeID() == typeID && id.getInstanceID() == instanceID)
+                return minigame;
+        }
+        return null;
     }
 
     /**
@@ -157,9 +201,9 @@ public class MinigameManager {
      * @return The active minigame instance, or null if there are no active
      *         minigames with the given name.
      */
-    public Minigame getActiveMinigame(String name) {
+    public Minigame findActiveMinigame(String name) {
         for (var minigame : activeMinigames) {
-            if (minigame.getName().equals(name))
+            if (minigame.getID().getMinigameType().equals(name))
                 return minigame;
         }
 
@@ -180,5 +224,14 @@ public class MinigameManager {
         for (var lobby : lobbies) {
             lobby.removePlayerFromLobby(player);
         }
+    }
+
+    /**
+     * Gets the arena distributor associated with this server.
+     * 
+     * @return The arena distributor.
+     */
+    public ArenaDistributor getArenaDistributor() {
+        return arenaDistributor;
     }
 }

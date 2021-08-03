@@ -6,10 +6,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import net.whg.utils.CmdPlayer;
 import net.whg.utils.cmdformat.Subcommand;
 import net.whg.utils.exceptions.CommandException;
 import net.whg.utils.exceptions.NoPermissionsException;
+import net.whg.utils.player.CmdPlayer;
 
 public class BuildArenaAction extends Subcommand {
 

@@ -9,8 +9,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import net.whg.minigames.framework.exceptions.PlayerAlreadyInMinigameException;
-import net.whg.utils.CmdPlayer;
 import net.whg.utils.StringUtils;
+import net.whg.utils.player.CmdPlayer;
 
 /**
  * Contains a list of players that are waiting in a lobby for a game to start.
