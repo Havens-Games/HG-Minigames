@@ -1,5 +1,8 @@
 package net.whg.minigames.framework.arena;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -12,6 +15,7 @@ import net.whg.minigames.framework.MinigameID;
  * instances.
  */
 public class ArenaDistributor {
+    private final List<SchematicPlaceholder> placeholders = new ArrayList<>();
     private final int arenaDistance;
     private final World world;
 
@@ -49,6 +53,38 @@ public class ArenaDistributor {
      */
     public Arena getArena(MinigameID id) {
         var location = getLocation(id.getTypeID(), id.getInstanceID());
-        return new Arena(location, id.getMinigameType());
+        return new Arena(this, location, id.getMinigameType());
+    }
+
+    /**
+     * Returns an unsupervised arena instance at the given location with the given
+     * minigame type.
+     * 
+     * @param minigameType - The minigame type.
+     * @param location     - The location of the arena.
+     * @return A new arena instance.
+     */
+    public Arena getArenaUnsupervised(String minigameType, Location location) {
+        return new Arena(this, location, minigameType);
+    }
+
+    /**
+     * Registers a new placeholder type to listen for when building new arena
+     * instances.
+     * 
+     * @param placeholder - The placeholder.
+     */
+    public void registerPlaceholder(SchematicPlaceholder placeholder) {
+        placeholders.add(placeholder);
+    }
+
+    /**
+     * Gets a list of all registered placeholders for the requested minigame type.
+     * 
+     * @param minigameType - The minigame type.
+     * @return A list of placeholders.
+     */
+    List<SchematicPlaceholder> getPlaceholders(String minigameType) {
+        return placeholders.stream().filter(p -> p.getMinigameType().equals(minigameType)).toList();
     }
 }

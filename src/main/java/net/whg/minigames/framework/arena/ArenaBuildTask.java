@@ -14,6 +14,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.math.transform.Identity;
 
 import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -26,7 +27,7 @@ public class ArenaBuildTask extends BukkitRunnable {
 
     private final ArenaBuildStates states;
 
-    public ArenaBuildTask(Location location, Clipboard schematic) {
+    ArenaBuildTask(List<SchematicPlaceholder> placeholders, Arena arena, Location location, Clipboard schematic) {
         states = new ArenaBuildStates();
 
         var world = location.getWorld();
@@ -118,6 +119,27 @@ public class ArenaBuildTask extends BukkitRunnable {
             return true;
         });
         states.addTask(spawnEntitiesTask);
+
+        // === LOOK FOR PLACEHOLDERS ===
+        var placeholderIterator = new RegionIterator(chunkMinX, 0, chunkMinZ, chunkMaxX, 0, chunkMaxZ);
+        var placeholderTask = new ArenaBuildSubtask(placeholderIterator, 1, () -> {
+            var chunk = world.getChunkAt(chunkLoadIterator.getX(), chunkLoadIterator.getZ());
+            for (var entity : chunk.getEntities()) {
+                if (!(entity instanceof ArmorStand))
+                    continue;
+
+                for (var placeholder : placeholders) {
+                    if (entity.getName().equals(placeholder.getNameTag())) {
+                        placeholder.registerLocation(arena, entity.getLocation());
+                        entity.remove();
+                        break;
+                    }
+                }
+            }
+
+            return true;
+        });
+        states.addTask(placeholderTask);
 
         // === UNLOAD ALL CHUNKS ===
         var chunkUnloadIterator = new RegionIterator(chunkMinX, 0, chunkMinZ, chunkMaxX, 0, chunkMaxZ);

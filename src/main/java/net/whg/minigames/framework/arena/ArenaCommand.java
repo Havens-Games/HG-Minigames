@@ -3,8 +3,8 @@ package net.whg.minigames.framework.arena;
 import net.whg.utils.cmdformat.CommandHandler;
 
 public class ArenaCommand extends CommandHandler {
-    public ArenaCommand() {
-        actions.add(new BuildArenaAction());
+    public ArenaCommand(ArenaDistributor arenaDistributor) {
+        actions.add(new BuildArenaAction(arenaDistributor));
     }
 
     @Override

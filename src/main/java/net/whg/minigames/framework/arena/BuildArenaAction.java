@@ -12,7 +12,6 @@ import net.whg.utils.exceptions.NoPermissionsException;
 import net.whg.utils.player.CmdPlayer;
 
 public class BuildArenaAction extends Subcommand {
-
     private class ReportWhenFinished extends BukkitRunnable {
         private final CmdPlayer sender;
         private final Arena arena;
@@ -39,6 +38,12 @@ public class BuildArenaAction extends Subcommand {
         }
     }
 
+    private final ArenaDistributor arenaDistributor;
+
+    public BuildArenaAction(ArenaDistributor arenaDistributor) {
+        this.arenaDistributor = arenaDistributor;
+    }
+
     @Override
     public void execute(CmdPlayer sender, String[] args) throws CommandException {
         if (!sender.isOp())
@@ -51,7 +56,7 @@ public class BuildArenaAction extends Subcommand {
         var z = getInteger(args[4]);
 
         var location = new Location(world, x, y, z);
-        var arena = new Arena(location, arenaType);
+        var arena = arenaDistributor.getArenaUnsupervised(arenaType, location);
 
         try {
             var task = arena.buildArena();

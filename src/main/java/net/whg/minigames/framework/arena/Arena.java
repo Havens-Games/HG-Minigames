@@ -14,6 +14,7 @@ import org.bukkit.Location;
  * Represents an arena instance in the world.
  */
 public class Arena {
+    private final ArenaDistributor distributor;
     private final Location location;
     private final String name;
     private final File file;
@@ -21,10 +22,12 @@ public class Arena {
     /**
      * Creates a new arena instance.
      * 
-     * @param location - The location of this arena.
-     * @param name     - The name of this arena type.
+     * @param distributor - The arena distributor that made this arena instance.
+     * @param location    - The location of this arena.
+     * @param name        - The name of this arena type.
      */
-    public Arena(Location location, String name) {
+    Arena(ArenaDistributor distributor, Location location, String name) {
+        this.distributor = distributor;
         this.location = location;
         this.name = name;
 
@@ -64,9 +67,17 @@ public class Arena {
         }
     }
 
+    /**
+     * Creates a task to start building the arena schematic.
+     * 
+     * @return The active build task.
+     * @throws IOException If the schematic file could not be loaded.
+     */
     public ArenaBuildTask buildArena() throws IOException {
         var schematic = loadSchematic();
-        var task = new ArenaBuildTask(location, schematic);
+
+        var placeholders = distributor.getPlaceholders(name);
+        var task = new ArenaBuildTask(placeholders, this, location, schematic);
 
         var plugin = Bukkit.getPluginManager().getPlugin("HavensGames-Minigames");
         task.runTaskTimer(plugin, 1, 1);
