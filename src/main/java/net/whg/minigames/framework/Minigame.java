@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,6 +19,7 @@ import net.whg.minigames.framework.events.JoinMinigameEvent;
 import net.whg.minigames.framework.events.LeaveMinigameEvent;
 import net.whg.minigames.framework.events.MinigameEndEvent;
 import net.whg.minigames.framework.exceptions.PlayerAlreadyInMinigameException;
+import net.whg.utils.math.Vec3;
 import net.whg.utils.player.InventorySnapshot;
 
 /**
@@ -26,6 +30,7 @@ import net.whg.utils.player.InventorySnapshot;
 public abstract class Minigame implements Listener {
     private final List<Player> players = new ArrayList<>();
     private final Map<Player, InventorySnapshot> inventorySnapshots = new HashMap<>();
+    protected final Random random = new Random();
     private MinigameManager manager;
     private MinigameID id;
     private Arena arena;
@@ -153,5 +158,44 @@ public abstract class Minigame implements Listener {
      */
     public boolean isInstanced() {
         return instanced;
+    }
+
+    /**
+     * Searches through all entities to locate placeholder entities with the given
+     * name. A placeholder entity is represented as an armor stand with a matching
+     * name tag. These placeholder entities are removed and their locations are
+     * returned.
+     * 
+     * @param placeholder - The placeholder string to search for.
+     * @return A list of locations that were found.
+     */
+    protected List<Location> findPlaceholders(String placeholder) {
+        var list = new ArrayList<Location>();
+
+        var location = getArena().getLocation();
+        var schematic = getArena().getSchematic();
+        var world = location.getWorld();
+        var loc = new Vec3(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        var offset = loc.subtract(schematic.getOrigin());
+
+        var min = schematic.getMinimumPoint().add(offset);
+        var max = schematic.getMaximumPoint().add(offset);
+
+        for (var entity : world.getEntities()) {
+            if (!(entity instanceof ArmorStand))
+                continue;
+
+            var eLoc = entity.getLocation();
+            var entityPos = new Vec3(eLoc.getBlockX(), eLoc.getBlockY(), eLoc.getBlockZ());
+            if (!entityPos.isInBounds(min, max))
+                continue;
+
+            if (!entity.getName().equals(placeholder))
+                continue;
+
+            list.add(eLoc);
+        }
+
+        return list;
     }
 }

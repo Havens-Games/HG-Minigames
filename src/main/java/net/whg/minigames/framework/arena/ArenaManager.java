@@ -11,7 +11,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
 import net.whg.minigames.framework.MinigameID;
-import net.whg.minigames.framework.SchematicPlaceholder;
 import net.whg.minigames.framework.events.ArenaCompletedEvent;
 import net.whg.whsculpt.events.FinishedBuildingSchematicEvent;
 
@@ -21,7 +20,6 @@ import net.whg.whsculpt.events.FinishedBuildingSchematicEvent;
  */
 public class ArenaManager implements Listener {
     private final List<Arena> arenas = new ArrayList<>();
-    private final List<SchematicPlaceholder> placeholders = new ArrayList<>();
     private final int arenaDistance;
     private final World world;
 
@@ -71,26 +69,6 @@ public class ArenaManager implements Listener {
         arenas.add(arena);
 
         return arena;
-    }
-
-    /**
-     * Registers a new placeholder type to listen for when building new arena
-     * instances.
-     * 
-     * @param placeholder - The placeholder.
-     */
-    public void registerPlaceholder(SchematicPlaceholder placeholder) {
-        placeholders.add(placeholder);
-    }
-
-    /**
-     * Gets a list of all registered placeholders for the requested minigame type.
-     * 
-     * @param minigameType - The minigame type.
-     * @return A list of placeholders.
-     */
-    List<SchematicPlaceholder> getPlaceholders(String minigameType) {
-        return placeholders.stream().filter(p -> p.getMinigameType().equals(minigameType)).toList();
     }
 
     /**

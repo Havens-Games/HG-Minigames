@@ -43,12 +43,4 @@ public interface MinigameFactory {
      * @return The maximum number of players allowed into this minigame.
      */
     int getMaxPlayers();
-
-    /**
-     * Gets an array of all schematic placeholders for this minigame type to
-     * register.
-     * 
-     * @return The schematic placeholders.
-     */
-    SchematicPlaceholder[] getPlaceholders();
 }
