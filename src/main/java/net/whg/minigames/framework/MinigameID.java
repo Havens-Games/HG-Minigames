@@ -15,8 +15,9 @@ public class MinigameID {
      * Creates a new MinigameID object.
      * 
      * @param minigameType - The minigame type name.
-     * @param typeID       - The minigame type ID.
-     * @param instanceID   - The minigame instance ID.
+     * @param typeID       - The minigame type ID or -1 if not a real minigame type.
+     * @param instanceID   - The minigame instance ID or -1 if not a real minigame
+     *                     instance.
      */
     public MinigameID(String minigameType, int typeID, int instanceID) {
         this.minigameType = minigameType;
@@ -37,7 +38,8 @@ public class MinigameID {
     /**
      * Gets the minigame type ID. This is used to identify the minigame type.
      * 
-     * @return The type ID.
+     * @return The type ID, or -1 if this object does not represent an actual
+     *         minigame instance.
      */
     public int getTypeID() {
         return typeID;
@@ -48,7 +50,8 @@ public class MinigameID {
      * solely within active minigame instances within a single minigame type. These
      * are reused as minigames end.
      * 
-     * @return The instance ID.
+     * @return The instance ID, or -1 if this object does not represent an actual
+     *         minigame instance.
      */
     public int getInstanceID() {
         return instanceID;
@@ -63,5 +66,14 @@ public class MinigameID {
      */
     public UUID getUniqueID() {
         return uniqueID;
+    }
+
+    /**
+     * Checks if this minigame ID represents an actual minigame instance.
+     * 
+     * @return True if this ID is a real instance. False otherwise.
+     */
+    public boolean isReal() {
+        return typeID >= 0 && instanceID >= 0;
     }
 }

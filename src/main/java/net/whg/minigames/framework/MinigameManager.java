@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 
-import net.whg.minigames.framework.arena.ArenaDistributor;
+import net.whg.minigames.framework.arena.ArenaManager;
 import net.whg.minigames.framework.events.JoinLobbyEvent;
 
 /**
@@ -22,7 +22,7 @@ public class MinigameManager {
     private final List<Minigame> activeMinigames = new ArrayList<>();
     private final List<VirtualLobby> lobbies = new ArrayList<>();
     private final Plugin plugin;
-    private final ArenaDistributor arenaDistributor;
+    private final ArenaManager arenaDistributor;
 
     /**
      * Creates a new minigame manager.
@@ -31,7 +31,7 @@ public class MinigameManager {
      */
     public MinigameManager(Plugin plugin) {
         this.plugin = plugin;
-        arenaDistributor = new ArenaDistributor(plugin);
+        arenaDistributor = new ArenaManager(plugin);
     }
 
     /**
@@ -231,7 +231,7 @@ public class MinigameManager {
      * 
      * @return The arena distributor.
      */
-    public ArenaDistributor getArenaDistributor() {
+    public ArenaManager getArenaDistributor() {
         return arenaDistributor;
     }
 }

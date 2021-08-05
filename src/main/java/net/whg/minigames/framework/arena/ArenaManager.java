@@ -6,15 +6,21 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
 import net.whg.minigames.framework.MinigameID;
+import net.whg.minigames.framework.SchematicPlaceholder;
+import net.whg.minigames.framework.events.ArenaCompletedEvent;
+import net.whg.whsculpt.events.FinishedBuildingSchematicEvent;
 
 /**
  * A handler class for creating new arena instances as needed for new minigame
  * instances.
  */
-public class ArenaDistributor {
+public class ArenaManager implements Listener {
+    private final List<Arena> arenas = new ArrayList<>();
     private final List<SchematicPlaceholder> placeholders = new ArrayList<>();
     private final int arenaDistance;
     private final World world;
@@ -24,11 +30,13 @@ public class ArenaDistributor {
      * 
      * @param world - The world this distributor operates in.
      */
-    public ArenaDistributor(Plugin plugin) {
+    public ArenaManager(Plugin plugin) {
         var config = plugin.getConfig();
 
         arenaDistance = config.getInt("ArenaDistance");
         world = Bukkit.getWorld(config.getString("MinigameWorld"));
+
+        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     /**
@@ -38,7 +46,7 @@ public class ArenaDistributor {
      * @param instanceID - The instance ID of the minigame.
      * @return The arena location for the given instance.
      */
-    public Location getLocation(int typeID, int instanceID) {
+    private Location getLocation(int typeID, int instanceID) {
         var x = (typeID + 1) * arenaDistance;
         var y = 64;
         var z = (instanceID + 1) * arenaDistance;
@@ -46,26 +54,23 @@ public class ArenaDistributor {
     }
 
     /**
-     * Creates a new arena instance for the given minigame ID.
+     * Gets or creates a new arena instance for the given minigame ID.
      * 
      * @param id - The minigame ID.
      * @return The arena instance.
      */
     public Arena getArena(MinigameID id) {
-        var location = getLocation(id.getTypeID(), id.getInstanceID());
-        return new Arena(this, location, id.getMinigameType());
-    }
+        for (var arena : arenas) {
+            var arenaID = arena.getID();
+            if (arenaID.getTypeID() == id.getTypeID() && arenaID.getInstanceID() == id.getInstanceID())
+                return arena;
+        }
 
-    /**
-     * Returns an unsupervised arena instance at the given location with the given
-     * minigame type.
-     * 
-     * @param minigameType - The minigame type.
-     * @param location     - The location of the arena.
-     * @return A new arena instance.
-     */
-    public Arena getArenaUnsupervised(String minigameType, Location location) {
-        return new Arena(this, location, minigameType);
+        var location = getLocation(id.getTypeID(), id.getInstanceID());
+        var arena = new Arena(location, id);
+        arenas.add(arena);
+
+        return arena;
     }
 
     /**
@@ -86,5 +91,32 @@ public class ArenaDistributor {
      */
     List<SchematicPlaceholder> getPlaceholders(String minigameType) {
         return placeholders.stream().filter(p -> p.getMinigameType().equals(minigameType)).toList();
+    }
+
+    /**
+     * Gets the arena with the corresponding location object. This checks for
+     * variable instance equality rather than matching coordinates.
+     * 
+     * @param location - The location instance to look for.
+     * @return
+     */
+    private Arena getArena(Location location) {
+        for (var arena : arenas)
+            if (arena.getLocation() == location)
+                return arena;
+
+        return null;
+    }
+
+    @EventHandler
+    public void onSchematicBuildFinished(FinishedBuildingSchematicEvent e) {
+        var arena = getArena(e.getLocation());
+        if (arena == null)
+            return;
+
+        arena.setState(ArenaState.READY);
+
+        var event = new ArenaCompletedEvent(arena);
+        Bukkit.getPluginManager().callEvent(event);
     }
 }

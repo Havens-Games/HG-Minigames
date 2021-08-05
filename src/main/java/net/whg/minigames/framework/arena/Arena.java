@@ -1,48 +1,48 @@
 package net.whg.minigames.framework.arena;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-
-import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+
+import net.whg.minigames.framework.MinigameID;
+import net.whg.whsculpt.schematic.Schematic;
+import net.whg.whsculpt.schematic.SchematicBuildTask;
 
 /**
  * Represents an arena instance in the world.
  */
 public class Arena {
-    private final ArenaDistributor distributor;
     private final Location location;
-    private final String name;
+    private final MinigameID id;
     private final File file;
+    private Schematic schematic;
+    private ArenaState state = ArenaState.NOT_BUILT;
 
     /**
      * Creates a new arena instance.
      * 
-     * @param distributor - The arena distributor that made this arena instance.
-     * @param location    - The location of this arena.
-     * @param name        - The name of this arena type.
+     * @param location - The location of this arena.
+     * @param id       - The ID of the minigame this arena is for.
      */
-    Arena(ArenaDistributor distributor, Location location, String name) {
-        this.distributor = distributor;
+    Arena(Location location, MinigameID id) {
         this.location = location;
-        this.name = name;
+        this.id = id;
 
+        // TODO Find a better way for store/load schematics.
         var worldEdit = Bukkit.getPluginManager().getPlugin("WorldEdit");
         var schematicFolder = new File(worldEdit.getDataFolder(), "schematics");
-        file = new File(schematicFolder, name + ".schem");
+        file = new File(schematicFolder, id.getMinigameType() + ".schem");
     }
 
     /**
-     * Gets the name of this arena type.
+     * Gets the minigame ID of this arena.
      * 
-     * @return The name.
+     * @return The minigame ID.
      */
-    public String getName() {
-        return name;
+    public MinigameID getID() {
+        return id;
     }
 
     /**
@@ -55,33 +55,44 @@ public class Arena {
     }
 
     /**
-     * Loads the schematic file that is associated with this arena type. The
-     * schematic file is a WorldEdit schematic that has the same name as this arena.
+     * Creates a build task in WraithavenSculpt. to start building the arena
+     * schematic.
      * 
-     * @throws IOException - If the schematic file could not be loaded.
+     * @throws IOException If the schematic file could not be loaded.
      */
-    public Clipboard loadSchematic() throws IOException {
-        var format = ClipboardFormats.findByFile(file);
-        try (var reader = format.getReader(new FileInputStream(file))) {
-            return reader.read();
-        }
+    public void buildArena() throws IOException {
+        if (schematic == null)
+            schematic = Schematic.loadSchematic(file);
+
+        setState(ArenaState.BUILDING);
+        new SchematicBuildTask(schematic, location).start();
     }
 
     /**
-     * Creates a task to start building the arena schematic.
+     * Gets the schematic associated with this arena. The schematic object is not
+     * loaded until {@link #buildArena()} is called at least once.
      * 
-     * @return The active build task.
-     * @throws IOException If the schematic file could not be loaded.
+     * @return The schematic, or null if the schematic has not been loaded yet.
      */
-    public ArenaBuildTask buildArena() throws IOException {
-        var schematic = loadSchematic();
+    public Schematic getSchematic() {
+        return schematic;
+    }
 
-        var placeholders = distributor.getPlaceholders(name);
-        var task = new ArenaBuildTask(placeholders, this, location, schematic);
+    /**
+     * Gets the current state of this arena.
+     * 
+     * @return The current arena state.
+     */
+    public ArenaState getState() {
+        return state;
+    }
 
-        var plugin = Bukkit.getPluginManager().getPlugin("HavensGames-Minigames");
-        task.runTaskTimer(plugin, 1, 1);
-
-        return task;
+    /**
+     * Sets the state of this arena.
+     * 
+     * @param state - The new state.
+     */
+    void setState(ArenaState state) {
+        this.state = state;
     }
 }

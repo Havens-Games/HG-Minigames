@@ -4,6 +4,7 @@ import net.whg.minigames.framework.Minigame;
 import net.whg.minigames.framework.MinigameFactory;
 import net.whg.minigames.framework.MinigameID;
 import net.whg.minigames.framework.MinigameManager;
+import net.whg.minigames.framework.SchematicPlaceholder;
 
 public class PacManLightsOutFactory implements MinigameFactory {
 
@@ -30,5 +31,11 @@ public class PacManLightsOutFactory implements MinigameFactory {
     @Override
     public int getMaxPlayers() {
         return 4;
+    }
+
+    @Override
+    public SchematicPlaceholder[] getPlaceholders() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

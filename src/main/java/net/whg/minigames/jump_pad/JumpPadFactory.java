@@ -4,6 +4,7 @@ import net.whg.minigames.framework.Minigame;
 import net.whg.minigames.framework.MinigameFactory;
 import net.whg.minigames.framework.MinigameID;
 import net.whg.minigames.framework.MinigameManager;
+import net.whg.minigames.framework.SchematicPlaceholder;
 
 public class JumpPadFactory implements MinigameFactory {
 
@@ -30,5 +31,11 @@ public class JumpPadFactory implements MinigameFactory {
     @Override
     public int getMaxPlayers() {
         return Integer.MAX_VALUE;
+    }
+
+    @Override
+    public SchematicPlaceholder[] getPlaceholders() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

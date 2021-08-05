@@ -1,6 +1,8 @@
-package net.whg.minigames.framework.arena;
+package net.whg.minigames.framework;
 
 import org.bukkit.Location;
+
+import net.whg.minigames.framework.arena.Arena;
 
 /**
  * A handler for receiving schematic placeholders within the arena on build.
