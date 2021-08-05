@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import net.whg.minigames.framework.arena.Arena;
 import net.whg.minigames.framework.events.JoinMinigameEvent;
 import net.whg.minigames.framework.events.LeaveMinigameEvent;
+import net.whg.minigames.framework.events.MinigameEndEvent;
 import net.whg.minigames.framework.exceptions.PlayerAlreadyInMinigameException;
 import net.whg.utils.player.InventorySnapshot;
 
@@ -25,20 +26,25 @@ import net.whg.utils.player.InventorySnapshot;
 public abstract class Minigame implements Listener {
     private final List<Player> players = new ArrayList<>();
     private final Map<Player, InventorySnapshot> inventorySnapshots = new HashMap<>();
-    private final MinigameManager manager;
-    private final MinigameID id;
-    private final Arena arena;
+    private MinigameManager manager;
+    private MinigameID id;
+    private Arena arena;
+    private boolean instanced;
 
     /**
-     * Creates a new minigame instance.
+     * Called right when a new minigame instance is created to assign proper flags.
      * 
-     * @param manager - The minigame manager instance this minigame is bound to.
-     * @param id      - The minigame ID.
+     * @param manager   - The minigame manager instance this minigame is bound to.
+     * @param id        - The ID of this minigame.
+     * @param arena     - The arena instance this minigame is using.
+     * @param instanced - True if this minigame is instance, false if this minigame
+     *                  is not instanced.
      */
-    protected Minigame(MinigameManager manager, MinigameID id, Arena arena) {
+    final void init(MinigameManager manager, MinigameID id, Arena arena, boolean instanced) {
         this.manager = manager;
         this.id = id;
         this.arena = arena;
+        this.instanced = instanced;
     }
 
     /**
@@ -84,6 +90,13 @@ public abstract class Minigame implements Listener {
 
         var event = new LeaveMinigameEvent(player, this);
         Bukkit.getPluginManager().callEvent(event);
+
+        if (players.isEmpty() && isInstanced()) {
+            manager.endMinigame(this);
+
+            var endEvent = new MinigameEndEvent(this);
+            Bukkit.getPluginManager().callEvent(endEvent);
+        }
     }
 
     /**
@@ -131,5 +144,14 @@ public abstract class Minigame implements Listener {
      */
     public Arena getArena() {
         return arena;
+    }
+
+    /**
+     * Gets whether or not this minigame is instanced.
+     * 
+     * @return True if this minigame is instanced. False otherwise.
+     */
+    public boolean isInstanced() {
+        return instanced;
     }
 }

@@ -2,16 +2,13 @@ package net.whg.minigames.jump_pad;
 
 import net.whg.minigames.framework.Minigame;
 import net.whg.minigames.framework.MinigameFactory;
-import net.whg.minigames.framework.MinigameID;
-import net.whg.minigames.framework.MinigameManager;
 import net.whg.minigames.framework.SchematicPlaceholder;
-import net.whg.minigames.framework.arena.Arena;
 
 public class JumpPadFactory implements MinigameFactory {
 
     @Override
-    public Minigame createInstance(MinigameManager manager, MinigameID id, Arena arena) {
-        return new JumpPad(manager, id, arena);
+    public Minigame createInstance() {
+        return new JumpPad();
     }
 
     @Override

@@ -12,6 +12,7 @@ import org.bukkit.plugin.Plugin;
 
 import net.whg.minigames.framework.arena.ArenaManager;
 import net.whg.minigames.framework.events.JoinLobbyEvent;
+import net.whg.minigames.framework.events.MinigameStartEvent;
 
 /**
  * A manager object for handling active minigames, factory objects, and active
@@ -68,7 +69,8 @@ public class MinigameManager {
         var id = generateID(name);
         var arena = arenaDistributor.getArena(id);
 
-        var minigame = factory.createInstance(this, id, arena);
+        var minigame = factory.createInstance();
+        minigame.init(this, id, arena, factory.isInstanced());
         activeMinigames.add(minigame);
 
         try {
@@ -78,6 +80,10 @@ public class MinigameManager {
         }
 
         Bukkit.getPluginManager().registerEvents(minigame, plugin);
+
+        var event = new MinigameStartEvent(minigame);
+        Bukkit.getPluginManager().callEvent(event);
+
         return minigame;
     }
 
