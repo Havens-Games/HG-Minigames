@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import net.whg.minigames.framework.arena.Arena;
 import net.whg.minigames.framework.events.JoinMinigameEvent;
 import net.whg.minigames.framework.events.LeaveMinigameEvent;
 import net.whg.minigames.framework.exceptions.PlayerAlreadyInMinigameException;
@@ -26,6 +27,7 @@ public abstract class Minigame implements Listener {
     private final Map<Player, InventorySnapshot> inventorySnapshots = new HashMap<>();
     private final MinigameManager manager;
     private final MinigameID id;
+    private final Arena arena;
 
     /**
      * Creates a new minigame instance.
@@ -33,9 +35,10 @@ public abstract class Minigame implements Listener {
      * @param manager - The minigame manager instance this minigame is bound to.
      * @param id      - The minigame ID.
      */
-    protected Minigame(MinigameManager manager, MinigameID id) {
+    protected Minigame(MinigameManager manager, MinigameID id, Arena arena) {
         this.manager = manager;
         this.id = id;
+        this.arena = arena;
     }
 
     /**
@@ -119,5 +122,14 @@ public abstract class Minigame implements Listener {
      */
     public final MinigameID getID() {
         return id;
+    }
+
+    /**
+     * Gets the arena instance this minigame instance is using.
+     * 
+     * @return The arena.
+     */
+    public Arena getArena() {
+        return arena;
     }
 }

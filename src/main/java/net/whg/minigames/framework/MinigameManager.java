@@ -66,11 +66,13 @@ public class MinigameManager {
             return null;
 
         var id = generateID(name);
-        var minigame = factory.createInstance(this, id);
+        var arena = arenaDistributor.getArena(id);
+
+        var minigame = factory.createInstance(this, id, arena);
         activeMinigames.add(minigame);
 
         try {
-            arenaDistributor.getArena(id).buildArena();
+            arena.buildArena();
         } catch (IOException e) {
             Bukkit.getLogger().log(Level.SEVERE, e, () -> "Failed to build arena for " + name + "!");
         }

@@ -8,6 +8,7 @@ import org.bukkit.potion.PotionEffectType;
 import net.whg.minigames.framework.Minigame;
 import net.whg.minigames.framework.MinigameID;
 import net.whg.minigames.framework.MinigameManager;
+import net.whg.minigames.framework.arena.Arena;
 import net.whg.minigames.framework.events.JoinMinigameEvent;
 
 /**
@@ -16,8 +17,8 @@ import net.whg.minigames.framework.events.JoinMinigameEvent;
  */
 public class JumpPad extends Minigame {
 
-    protected JumpPad(MinigameManager manager, MinigameID id) {
-        super(manager, id);
+    protected JumpPad(MinigameManager manager, MinigameID id, Arena arena) {
+        super(manager, id, arena);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

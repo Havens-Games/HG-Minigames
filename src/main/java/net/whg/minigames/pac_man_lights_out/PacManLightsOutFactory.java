@@ -5,12 +5,13 @@ import net.whg.minigames.framework.MinigameFactory;
 import net.whg.minigames.framework.MinigameID;
 import net.whg.minigames.framework.MinigameManager;
 import net.whg.minigames.framework.SchematicPlaceholder;
+import net.whg.minigames.framework.arena.Arena;
 
 public class PacManLightsOutFactory implements MinigameFactory {
 
     @Override
-    public Minigame createInstance(MinigameManager manager, MinigameID id) {
-        return new PacManLightsOut(manager, id);
+    public Minigame createInstance(MinigameManager manager, MinigameID id, Arena arena) {
+        return new PacManLightsOut(manager, id, arena);
     }
 
     @Override

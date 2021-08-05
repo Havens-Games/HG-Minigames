@@ -1,5 +1,7 @@
 package net.whg.minigames.framework;
 
+import net.whg.minigames.framework.arena.Arena;
+
 /**
  * A factory object for creating minigame instances.
  */
@@ -9,9 +11,10 @@ public interface MinigameFactory {
      * 
      * @param manager - The minigame manager instance that triggered this action.
      * @param id      - The minigame ID.
+     * @param arena   - The arena instance associated with the minigame instance.
      * @return The new minigame instance.
      */
-    Minigame createInstance(MinigameManager manager, MinigameID id);
+    Minigame createInstance(MinigameManager manager, MinigameID id, Arena arena);
 
     /**
      * Gets the name of the minigame.
