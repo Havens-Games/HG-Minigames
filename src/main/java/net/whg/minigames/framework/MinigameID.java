@@ -76,4 +76,15 @@ public class MinigameID {
     public boolean isReal() {
         return typeID >= 0 && instanceID >= 0;
     }
+
+    /**
+     * Gets the instance name of this Minigame ID. An instance name is simply the
+     * minigame type followed by the instance ID, with a space between. Useful for
+     * debugging while using a human-friendly display name.
+     * 
+     * @return The instance name.
+     */
+    public String instanceName() {
+        return minigameType + " " + instanceID;
+    }
 }
