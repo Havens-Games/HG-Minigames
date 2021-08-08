@@ -4,12 +4,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>net.whg.havensgames</groupId>
-  <artifactId>minigames</artifactId>
+  <artifactId>HG-Minigames</artifactId>
   <version>0.1.0</version>
   <packaging>jar</packaging>
 
   <name>havensgames-minigames</name>
-  <url>https://github.com/Havens-Games/Minigames</url>
+  <url>https://github.com/Havens-Games/HG-Minigames</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -43,7 +43,7 @@
     <dependency>
       <groupId>net.whg.havensgames</groupId>
       <artifactId>WraithLib</artifactId>
-      <version>${hg-wraithlib.version}</version>
+      <version>${wraithlib.version}</version>
       <scope>system</scope>
       <systemPath>${project.basedir}/../WraithLib/target/WraithLib-${wraithlib.version}.jar</systemPath>
     </dependency>
