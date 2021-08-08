@@ -38,26 +38,20 @@ public class VirtualLobby implements Listener {
      * requirements to begin, the minigame instance will be started instantly.
      * 
      * @param player - The player to add.
-     * @return True is the minigame met all requirements and has been started. False
-     *         otherwise.
      */
-    boolean addPlayerToLobby(Player player) {
+    void addPlayerToLobby(Player player) {
         if (lobby.contains(player))
-            return false;
+            return;
 
         lobby.add(player);
 
         if (shouldStart()) {
             var minigame = manager.initializeMinigame(minigameName);
             populateInstance(minigame);
-
-            return true;
         } else {
             var sender = new CmdPlayer(player);
             var friendlyName = StringUtils.splitCamelCase(minigameName);
             sender.sendConfirmation("You have joined the lobby for %s!", friendlyName);
-
-            return false;
         }
     }
 

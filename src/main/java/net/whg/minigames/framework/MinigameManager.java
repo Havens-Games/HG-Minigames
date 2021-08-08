@@ -182,10 +182,8 @@ public class MinigameManager {
      * 
      * @param player   - The player to add.
      * @param minigame - The name of the minigame.
-     * @return True is the minigame met all requirements and has been started. False
-     *         otherwise.
      */
-    public boolean addToLobby(Player player, String minigame) {
+    public void addToLobby(Player player, String minigame) {
         var lobby = getLobby(minigame);
         if (lobby == null)
             throw new IllegalArgumentException("Minigame: '" + minigame + "' does not have a lobby or does not exist!");
@@ -193,12 +191,12 @@ public class MinigameManager {
         var event = new JoinLobbyEvent(player, minigame);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled())
-            return false;
+            return;
 
         for (var lob : lobbies)
             lob.removePlayerFromLobby(player);
 
-        return lobby.addPlayerToLobby(player);
+        lobby.addPlayerToLobby(player);
     }
 
     /**

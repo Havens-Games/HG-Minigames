@@ -29,9 +29,8 @@ public class MinigameJoinAction extends Subcommand {
 
         if (minigame.isInstanced()) {
             minigameManager.removeFromAllMinigames(player);
-            var startedGame = minigameManager.addToLobby(player, args[0]);
 
-            if (!startedGame && lobbyGame != null) {
+            if (lobbyGame != null) {
                 try {
                     lobbyGame.addPlayer(player);
                 } catch (PlayerAlreadyInMinigameException e) {
@@ -39,6 +38,8 @@ public class MinigameJoinAction extends Subcommand {
                     e.printStackTrace();
                 }
             }
+
+            minigameManager.addToLobby(player, args[0]);
         } else {
             if (lobbyGame != null)
                 throw new UnknownArgumentException("%s does not have a lobby!", args[0]);
