@@ -16,7 +16,7 @@
     <maven.compiler.source>16</maven.compiler.source>
     <maven.compiler.target>16</maven.compiler.target>
     <java.version>16</java.version>
-    <hg-utils.version>0.2.0</hg-utils.version>
+    <wraithlib.version>0.2.0</wraithlib.version>
     <whsculpt.version>0.1.0</whsculpt.version>
   </properties>
 
@@ -42,10 +42,10 @@
     </dependency>
     <dependency>
       <groupId>net.whg.havensgames</groupId>
-      <artifactId>utils</artifactId>
-      <version>${hg-utils.version}</version>
+      <artifactId>WraithLib</artifactId>
+      <version>${hg-wraithlib.version}</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/../Utils/target/utils-${hg-utils.version}.jar</systemPath>
+      <systemPath>${project.basedir}/../WraithLib/target/WraithLib-${wraithlib.version}.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>net.whg.havensgames</groupId>
