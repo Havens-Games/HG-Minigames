@@ -194,6 +194,7 @@ public abstract class Minigame implements Listener {
                 continue;
 
             list.add(eLoc);
+            entity.remove();
         }
 
         return list;
