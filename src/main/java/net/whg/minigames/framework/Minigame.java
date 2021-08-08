@@ -14,12 +14,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import net.whg.minigames.MinigamesPlugin;
 import net.whg.minigames.framework.arena.Arena;
 import net.whg.minigames.framework.events.JoinMinigameEvent;
 import net.whg.minigames.framework.events.LeaveMinigameEvent;
 import net.whg.minigames.framework.events.MinigameEndEvent;
 import net.whg.minigames.framework.exceptions.PlayerAlreadyInMinigameException;
-import net.whg.utils.MessageUtils;
 import net.whg.utils.math.Vec3;
 import net.whg.utils.player.InventorySnapshot;
 
@@ -52,7 +52,7 @@ public abstract class Minigame implements Listener {
         this.arena = arena;
         this.instanced = instanced;
 
-        MessageUtils.logInfo("Minigame %s has been initialized.", id.instanceName());
+        MinigamesPlugin.logInfo("Minigame %s has been initialized.", id.instanceName());
     }
 
     /**
@@ -77,7 +77,7 @@ public abstract class Minigame implements Listener {
         var event = new JoinMinigameEvent(player, this);
         Bukkit.getPluginManager().callEvent(event);
 
-        MessageUtils.logInfo("%s has joined the minigame %s.", player.getName(), id.instanceName());
+        MinigamesPlugin.logInfo("%s has joined the minigame %s.", player.getName(), id.instanceName());
     }
 
     /**
@@ -101,7 +101,7 @@ public abstract class Minigame implements Listener {
         var event = new LeaveMinigameEvent(player, this);
         Bukkit.getPluginManager().callEvent(event);
 
-        MessageUtils.logInfo("%s has left the minigame %s.", player.getName(), id.instanceName());
+        MinigamesPlugin.logInfo("%s has left the minigame %s.", player.getName(), id.instanceName());
 
         if (players.isEmpty() && isInstanced()) {
             manager.endMinigame(this);
@@ -109,7 +109,7 @@ public abstract class Minigame implements Listener {
             var endEvent = new MinigameEndEvent(this);
             Bukkit.getPluginManager().callEvent(endEvent);
 
-            MessageUtils.logInfo("Minigame %s has ended.", id.instanceName());
+            MinigamesPlugin.logInfo("Minigame %s has ended.", id.instanceName());
         }
     }
 
@@ -206,7 +206,7 @@ public abstract class Minigame implements Listener {
             entity.remove();
         }
 
-        MessageUtils.logInfo("Loaded %d placeholders for %s in the minigame %s.", list.size(), placeholder,
+        MinigamesPlugin.logInfo("Loaded %d placeholders for %s in the minigame %s.", list.size(), placeholder,
                 id.instanceName());
 
         return list;

@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import net.whg.minigames.MinigamesPlugin;
 import net.whg.minigames.framework.exceptions.PlayerAlreadyInMinigameException;
 import net.whg.utils.StringUtils;
 import net.whg.utils.player.CmdPlayer;
@@ -44,6 +45,7 @@ public class VirtualLobby implements Listener {
             return;
 
         lobby.add(player);
+        MinigamesPlugin.logInfo("%s has the joined the lobby for %s.", player.getName(), minigameName);
 
         if (shouldStart()) {
             var minigame = manager.initializeMinigame(minigameName);
