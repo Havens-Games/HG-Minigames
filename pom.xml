@@ -16,6 +16,8 @@
     <maven.compiler.source>16</maven.compiler.source>
     <maven.compiler.target>16</maven.compiler.target>
     <java.version>16</java.version>
+    <hg-utils.version>0.2.0</hg-utils.version>
+    <whsculpt.version>0.1.0</whsculpt.version>
   </properties>
 
   <repositories>
@@ -41,16 +43,16 @@
     <dependency>
       <groupId>net.whg.havensgames</groupId>
       <artifactId>utils</artifactId>
-      <version>0.2.0</version>
+      <version>${hg-utils.version}</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/../Utils/target/utils-0.2.0.jar</systemPath>
+      <systemPath>${project.basedir}/../Utils/target/utils-${hg-utils.version}.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>net.whg.havensgames</groupId>
       <artifactId>WraithavenSculpt</artifactId>
-      <version>0.1.0</version>
+      <version>${whsculpt.version}</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/../WraithavenSculpt/target/WraithavenSculpt-0.1.0.jar</systemPath>
+      <systemPath>${project.basedir}/../WraithavenSculpt/target/WraithavenSculpt-${whsculpt.version}.jar</systemPath>
     </dependency>
   </dependencies>
 
