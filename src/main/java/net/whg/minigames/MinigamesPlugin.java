@@ -8,27 +8,24 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import net.whg.minigames.framework.MinigameCommand;
 import net.whg.minigames.framework.MinigameManager;
-import net.whg.minigames.jump_pad.JumpPadFactory;
-import net.whg.minigames.pac_man_lights_out.PacManLightsOutFactory;
 
 public class MinigamesPlugin extends JavaPlugin {
+    private MinigameManager minigameManager;
+
     @Override
     public void onEnable() {
         updateDefaultConfig();
 
-        var minigameManager = new MinigameManager(this);
+        minigameManager = new MinigameManager(this);
 
         getCommand("mg").setExecutor(new MinigameCommand(minigameManager));
-
-        minigameManager.registerMinigameType(new JumpPadFactory());
-        minigameManager.registerMinigameType(new PacManLightsOutFactory());
-
         Bukkit.getLogger().log(Level.INFO, "HG-Minigames has been enabled.");
     }
 
     @Override
     public void onDisable() {
         HandlerList.unregisterAll(this);
+        minigameManager = null;
 
         Bukkit.getLogger().log(Level.INFO, "HG-Minigames has been disabled.");
     }
@@ -41,5 +38,14 @@ public class MinigamesPlugin extends JavaPlugin {
 
         config.options().copyDefaults(true);
         saveConfig();
+    }
+
+    /**
+     * Gets the minigame manager associated with this plugin.
+     * 
+     * @return The minigame manager.
+     */
+    public MinigameManager getMinigameManager() {
+        return minigameManager;
     }
 }
