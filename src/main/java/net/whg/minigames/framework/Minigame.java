@@ -206,7 +206,7 @@ public abstract class Minigame implements Listener {
             entity.remove();
         }
 
-        MinigamesPlugin.logInfo("Loaded %d placeholders for %s in the minigame %s.", list.size(), placeholder,
+        MinigamesPlugin.logInfo("Loaded %s placeholders for %s in the minigame %s.", list.size(), placeholder,
                 id.instanceName());
 
         return list;

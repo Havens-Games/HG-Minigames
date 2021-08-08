@@ -81,6 +81,8 @@ public class VirtualLobby implements Listener {
      * @param minigame - The minigame.
      */
     public void populateInstance(Minigame minigame) {
+        MinigamesPlugin.logInfo("Populating minigame instance for %s...", minigame.getID().instanceName());
+
         while (!lobby.isEmpty() && minigame.getSize() < factory.getMaxPlayers()) {
             var player = lobby.remove(0);
             var currentMinigame = manager.getCurrentMinigame(player);
@@ -88,6 +90,8 @@ public class VirtualLobby implements Listener {
                 currentMinigame.removePlayer(player);
 
             try {
+                MinigamesPlugin.logInfo("Added %s to minigame instance %s..", player.getName(),
+                        minigame.getID().instanceName());
                 minigame.addPlayer(player);
             } catch (PlayerAlreadyInMinigameException e) {
                 // Already handled above, so this should never be called.
