@@ -1,6 +1,6 @@
-name: HavensGames-Minigames
+name: ${project.artifactId}
 main: net.whg.minigames.MinigamesPlugin
-version: 0.1.0
+version: ${project.version}
 api-version: 1.17
 depend: [HavensGames-Utils, WraithavenSculpt]
 commands:
