@@ -13,8 +13,6 @@ import net.whg.utils.messaging.MessageUtils;
 public class MinigamesPlugin extends JavaPlugin {
     private static MinigamesPlugin instance;
 
-    private MinigameManager minigameManager;
-
     /**
      * Logs an informational message to the console.
      * 
@@ -44,6 +42,8 @@ public class MinigamesPlugin extends JavaPlugin {
     public static void logError(String message, Object... args) {
         MessageUtils.logError(instance, message, args);
     }
+
+    private MinigameManager minigameManager;
 
     @Override
     public void onEnable() {
