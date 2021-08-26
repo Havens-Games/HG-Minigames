@@ -5,6 +5,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import net.whg.minigames.MinigamesPlugin;
 import net.whg.utils.SafeArrayList;
 
 /**
@@ -35,6 +36,8 @@ public abstract class Team {
 
         var event = new TeamJoinEvent(player, this);
         Bukkit.getPluginManager().callEvent(event);
+
+        MinigamesPlugin.logInfo("%s has joined the team %s.", player.getName(), getDisplayName());
     }
 
     /**
@@ -50,6 +53,8 @@ public abstract class Team {
 
         var event = new TeamLeaveEvent(player, this);
         Bukkit.getPluginManager().callEvent(event);
+
+        MinigamesPlugin.logInfo("%s has left the team %s.", player.getName(), getDisplayName());
     }
 
     /**

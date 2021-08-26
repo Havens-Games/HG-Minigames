@@ -20,6 +20,8 @@ import net.whg.minigames.framework.events.JoinMinigameEvent;
 import net.whg.minigames.framework.events.LeaveMinigameEvent;
 import net.whg.minigames.framework.events.MinigameEndEvent;
 import net.whg.minigames.framework.exceptions.PlayerAlreadyInMinigameException;
+import net.whg.minigames.framework.teams.Team;
+import net.whg.minigames.framework.teams.TeamList;
 import net.whg.utils.math.Vec3;
 import net.whg.utils.player.InventorySnapshot;
 
@@ -31,11 +33,13 @@ import net.whg.utils.player.InventorySnapshot;
 public abstract class Minigame implements Listener {
     private final List<Player> players = new ArrayList<>();
     private final Map<Player, InventorySnapshot> inventorySnapshots = new HashMap<>();
+    private final TeamList teamList = new TeamList();
     protected final Random random = new Random();
     private MinigameManager manager;
     private MinigameID id;
     private Arena arena;
     private boolean instanced;
+    private Team defaultTeam;
 
     /**
      * Called right when a new minigame instance is created to assign proper flags.
@@ -77,7 +81,9 @@ public abstract class Minigame implements Listener {
         var event = new JoinMinigameEvent(player, this);
         Bukkit.getPluginManager().callEvent(event);
 
-        MinigamesPlugin.logInfo("%s has joined the minigame %s.", player.getName(), id.instanceName());
+
+        if (defaultTeam != null)
+            defaultTeam.addPlayer(player);
     }
 
     /**
@@ -97,6 +103,9 @@ public abstract class Minigame implements Listener {
         var invSnapshot = inventorySnapshots.get(player);
         InventorySnapshot.apply(player, invSnapshot);
         inventorySnapshots.remove(player);
+
+        for (var team : teamList.getTeams())
+            team.removePlayer(player);
 
         var event = new LeaveMinigameEvent(player, this);
         Bukkit.getPluginManager().callEvent(event);
@@ -210,5 +219,34 @@ public abstract class Minigame implements Listener {
                 id.instanceName());
 
         return list;
+    }
+
+    /**
+     * Gets the list of teams present in this minigame.
+     * 
+     * @return The list of teams.
+     */
+    protected TeamList getTeamList() {
+        return teamList;
+    }
+
+    /**
+     * Gets the default team for this minigame.
+     * 
+     * @return The default team.
+     * @see #setDefaultTeam(Team)
+     */
+    protected Team getDefaultTeam() {
+        return defaultTeam;
+    }
+
+    /**
+     * Sets the default team for this minigame. All players who join this minigame
+     * will automatically be added to this team.
+     * 
+     * @param team - The default team.
+     */
+    protected void setDefaultTeam(Team team) {
+        defaultTeam = team;
     }
 }

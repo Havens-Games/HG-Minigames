@@ -1,5 +1,6 @@
 package net.whg.minigames.framework.teams;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.entity.Player;
@@ -26,11 +27,13 @@ public class TeamList {
     }
 
     /**
-     * Gets the team that the given player is currently part of.
+     * Gets the team that the given player is currently part of. If the player is in
+     * multiple teams at once, only the first team is returned.
      * 
      * @param player - The player.
      * @return The team the player is in, or null if the player is not part of a
      *         team.
+     * @see #getTeams(Player)
      */
     public Team getTeam(Player player) {
         for (var team : teams) {
@@ -39,6 +42,24 @@ public class TeamList {
         }
 
         return null;
+    }
+
+    /**
+     * Gets a list of all teams that the player is currently part of.
+     * 
+     * @param player - The player.
+     * @return A list of all teams that the player is currently in.
+     * @see #getTeam(Player)
+     */
+    public List<Team> getTeams(Player player) {
+        var list = new ArrayList<Team>();
+
+        for (var team : teams) {
+            if (team.getPlayers().contains(player))
+                list.add(team);
+        }
+
+        return list;
     }
 
     /**
