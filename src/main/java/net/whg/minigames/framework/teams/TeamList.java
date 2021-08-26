@@ -49,4 +49,19 @@ public class TeamList {
     public List<Team> getTeams() {
         return teams.asReadOnly();
     }
+
+    /**
+     * Gets the team with the given name.
+     * 
+     * @param name - The name to look for.
+     * @return The team with the given name, or null if the team does not exist.
+     */
+    public Team getTeam(String name) {
+        for (var team : teams) {
+            if (team.getName().equals(name))
+                return team;
+        }
+
+        return null;
+    }
 }
