@@ -13,6 +13,14 @@ import net.whg.utils.SafeArrayList;
  */
 public abstract class Team {
     private final SafeArrayList<Player> players = new SafeArrayList<>();
+    private String displayName;
+
+    /**
+     * Creates a new Team instance.
+     */
+    protected Team() {
+        displayName = getName();
+    }
 
     /**
      * Adds a player to this team.
@@ -51,6 +59,24 @@ public abstract class Team {
      */
     public List<Player> getPlayers() {
         return players.asReadOnly();
+    }
+
+    /**
+     * Gets the display name of this team.
+     * 
+     * @return The display name.
+     */
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    /**
+     * Sets the display name of this team.
+     * 
+     * @param name - The display name.
+     */
+    public void setDisplayName(String name) {
+        displayName = name;
     }
 
     /**
