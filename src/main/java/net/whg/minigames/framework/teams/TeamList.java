@@ -3,7 +3,9 @@ package net.whg.minigames.framework.teams;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 
 import net.whg.utils.SafeArrayList;
 
@@ -24,6 +26,20 @@ public class TeamList {
             return;
 
         teams.add(team);
+
+        var plugin = Bukkit.getPluginManager().getPlugin("HG-Minigames");
+        Bukkit.getPluginManager().registerEvents(team, plugin);
+    }
+
+    /**
+     * Disposes and cleans up listeners for all teams currently in this list. This
+     * must be called at the end of each minigame to avoid memory leaks.
+     */
+    public void dispose() {
+        for (var team : teams)
+            HandlerList.unregisterAll(team);
+
+        teams.clear();
     }
 
     /**

@@ -1,9 +1,11 @@
 package net.whg.minigames.framework.teams;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 
 import net.whg.minigames.MinigamesPlugin;
 import net.whg.utils.SafeArrayList;
@@ -12,7 +14,7 @@ import net.whg.utils.SafeArrayList;
  * A team is a collection of players that are working together towards a common
  * goal within a minigame.
  */
-public abstract class Team {
+public abstract class Team implements Listener {
     private final SafeArrayList<Player> players = new SafeArrayList<>();
     private String displayName;
 
@@ -82,6 +84,13 @@ public abstract class Team {
      */
     public void setDisplayName(String name) {
         displayName = name;
+    }
+
+    /**
+     * Shuffles the ordering of players within this team.
+     */
+    public void shufflePlayerOrder() {
+        Collections.shuffle(players);
     }
 
     /**

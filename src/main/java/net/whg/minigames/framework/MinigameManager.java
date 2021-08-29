@@ -127,6 +127,7 @@ public class MinigameManager {
     void endMinigame(Minigame minigame) {
         activeMinigames.remove(minigame);
         HandlerList.unregisterAll(minigame);
+        minigame.getTeamList().dispose();
     }
 
     /**

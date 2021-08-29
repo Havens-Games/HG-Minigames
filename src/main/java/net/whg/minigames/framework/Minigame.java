@@ -16,9 +16,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import net.whg.minigames.MinigamesPlugin;
 import net.whg.minigames.framework.arena.Arena;
+import net.whg.minigames.framework.events.ArenaCompletedEvent;
 import net.whg.minigames.framework.events.JoinMinigameEvent;
 import net.whg.minigames.framework.events.LeaveMinigameEvent;
 import net.whg.minigames.framework.events.MinigameEndEvent;
+import net.whg.minigames.framework.events.MinigameReadyEvent;
 import net.whg.minigames.framework.exceptions.PlayerAlreadyInMinigameException;
 import net.whg.minigames.framework.teams.Team;
 import net.whg.minigames.framework.teams.TeamList;
@@ -80,7 +82,6 @@ public abstract class Minigame implements Listener {
 
         var event = new JoinMinigameEvent(player, this);
         Bukkit.getPluginManager().callEvent(event);
-
 
         if (defaultTeam != null)
             defaultTeam.addPlayer(player);
@@ -248,5 +249,14 @@ public abstract class Minigame implements Listener {
      */
     protected void setDefaultTeam(Team team) {
         defaultTeam = team;
+    }
+
+    @EventHandler
+    public void onArenaFinished(ArenaCompletedEvent e) {
+        if (e.getArena() != getArena())
+            return;
+
+        var event = new MinigameReadyEvent(this);
+        Bukkit.getPluginManager().callEvent(event);
     }
 }
