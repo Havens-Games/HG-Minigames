@@ -25,6 +25,11 @@
       <id>papermc</id>
       <url>https://papermc.io/repo/repository/maven-public/</url>
     </repository>
+    <repository>
+      <id>nexus</id>
+      <name>Lumine Public</name>
+      <url>https://mvn.lumine.io/repository/maven-public/</url>
+    </repository>
   </repositories>
 
   <dependencies>
@@ -47,6 +52,12 @@
       <version>${whsculpt.version}</version>
       <scope>system</scope>
       <systemPath>${project.basedir}/../WraithavenSculpt/target/WraithavenSculpt-${whsculpt.version}.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>com.ticxo.modelengine</groupId>
+      <artifactId>api</artifactId>
+      <version>R2.1.7</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 

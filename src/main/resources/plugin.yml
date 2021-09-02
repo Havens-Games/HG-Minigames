@@ -3,6 +3,7 @@ main: net.whg.minigames.MinigamesPlugin
 version: ${project.version}
 api-version: 1.17
 depend: [WraithLib, WraithavenSculpt]
+softdepend: [ModelEngine]
 commands:
   mg:
     description: Minigame management commands.
