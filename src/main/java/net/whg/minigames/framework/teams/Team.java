@@ -1,21 +1,18 @@
 package net.whg.minigames.framework.teams;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
+import org.bukkit.event.EventHandler;
 
 import net.whg.minigames.MinigamesPlugin;
-import net.whg.utils.SafeArrayList;
+import net.whg.minigames.framework.AbstractPlayerManager;
+import net.whg.minigames.framework.events.LeaveMinigameEvent;
 
 /**
  * A team is a collection of players that are working together towards a common
  * goal within a minigame.
  */
-public abstract class Team implements Listener {
-    private final SafeArrayList<Player> players = new SafeArrayList<>();
+public abstract class Team extends AbstractPlayerManager {
     private String displayName;
 
     /**
@@ -31,10 +28,10 @@ public abstract class Team implements Listener {
      * @param player - The player to add.
      */
     public void addPlayer(Player player) {
-        if (players.contains(player))
+        if (getPlayers().contains(player))
             return;
 
-        players.add(player);
+        addPlayerToList(player);
 
         var event = new TeamJoinEvent(player, this);
         Bukkit.getPluginManager().callEvent(event);
@@ -48,24 +45,15 @@ public abstract class Team implements Listener {
      * @param player - The player to remove.
      */
     public void removePlayer(Player player) {
-        if (!players.contains(player))
+        if (!getPlayers().contains(player))
             return;
 
-        players.remove(player);
+        removePlayerFromList(player);
 
         var event = new TeamLeaveEvent(player, this);
         Bukkit.getPluginManager().callEvent(event);
 
         MinigamesPlugin.logInfo("%s has left the team %s.", player.getName(), getDisplayName());
-    }
-
-    /**
-     * Gets a read-only list of all players on this team.
-     * 
-     * @return A list of players.
-     */
-    public List<Player> getPlayers() {
-        return players.asReadOnly();
     }
 
     /**
@@ -86,11 +74,10 @@ public abstract class Team implements Listener {
         displayName = name;
     }
 
-    /**
-     * Shuffles the ordering of players within this team.
-     */
-    public void shufflePlayerOrder() {
-        Collections.shuffle(players);
+    @EventHandler
+    public void onLeaveMinigame(LeaveMinigameEvent e) {
+        var player = e.getPlayer();
+        removePlayer(player);
     }
 
     /**

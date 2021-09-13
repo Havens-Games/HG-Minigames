@@ -22,7 +22,7 @@ public class TeamUtils {
      * @param teams   - The list of teams to place the players in.
      * @see #shuffleTeams(List, List, Map)
      */
-    public static void shuffleTeams(List<Player> players, List<Team> teams) {
+    public static void shuffleTeams(List<Player> players, List<? extends Team> teams) {
         shuffleTeams(players, teams, null);
     }
 
@@ -40,7 +40,8 @@ public class TeamUtils {
      *                If maxSize is null, there is no maximum value of players to
      *                add.
      */
-    public static void shuffleTeams(List<Player> players, List<Team> teams, Map<Team, Integer> maxSize) {
+    public static void shuffleTeams(List<Player> players, List<? extends Team> teams,
+            Map<? extends Team, Integer> maxSize) {
         if (players.isEmpty())
             throw new IllegalArgumentException("Player list cannot be empty!");
 

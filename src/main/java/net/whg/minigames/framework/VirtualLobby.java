@@ -83,7 +83,7 @@ public class VirtualLobby implements Listener {
     public void populateInstance(Minigame minigame) {
         MinigamesPlugin.logInfo("Populating minigame instance for %s...", minigame.getID().instanceName());
 
-        while (!lobby.isEmpty() && minigame.getSize() < factory.getMaxPlayers()) {
+        while (!lobby.isEmpty() && minigame.getPlayerCount() < factory.getMaxPlayers()) {
             var player = lobby.remove(0);
             var currentMinigame = manager.getCurrentMinigame(player);
             if (currentMinigame != null)

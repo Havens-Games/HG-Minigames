@@ -4,15 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 import net.whg.minigames.MinigamesPlugin;
 import net.whg.minigames.framework.arena.Arena;
@@ -22,7 +19,6 @@ import net.whg.minigames.framework.events.LeaveMinigameEvent;
 import net.whg.minigames.framework.events.MinigameEndEvent;
 import net.whg.minigames.framework.events.MinigameReadyEvent;
 import net.whg.minigames.framework.exceptions.PlayerAlreadyInMinigameException;
-import net.whg.minigames.framework.teams.Team;
 import net.whg.minigames.framework.teams.TeamList;
 import net.whg.utils.math.Vec3;
 import net.whg.utils.player.InventorySnapshot;
@@ -32,16 +28,13 @@ import net.whg.utils.player.InventorySnapshot;
  * players depending on whether they are currently inside that minigame instance
  * or not.
  */
-public abstract class Minigame implements Listener {
-    private final List<Player> players = new ArrayList<>();
+public abstract class Minigame extends AbstractPlayerManager {
     private final Map<Player, InventorySnapshot> inventorySnapshots = new HashMap<>();
     private final TeamList teamList = new TeamList();
-    protected final Random random = new Random();
     private MinigameManager manager;
     private MinigameID id;
     private Arena arena;
     private boolean instanced;
-    private Team defaultTeam;
 
     /**
      * Called right when a new minigame instance is created to assign proper flags.
@@ -70,21 +63,19 @@ public abstract class Minigame implements Listener {
      * @throws PlayerAlreadyInMinigameException If the player is already in a
      *                                          minigame.
      */
-    public final void addPlayer(Player player) throws PlayerAlreadyInMinigameException {
+    @Override
+    public void addPlayer(Player player) {
         var currentMinigame = manager.getCurrentMinigame(player);
         if (currentMinigame != null)
             throw new PlayerAlreadyInMinigameException(player, this, currentMinigame);
 
-        players.add(player);
+        addPlayerToList(player);
 
         var invSnapshot = InventorySnapshot.createSnapshotAndClear(player);
         inventorySnapshots.put(player, invSnapshot);
 
         var event = new JoinMinigameEvent(player, this);
         Bukkit.getPluginManager().callEvent(event);
-
-        if (defaultTeam != null)
-            defaultTeam.addPlayer(player);
     }
 
     /**
@@ -95,11 +86,12 @@ public abstract class Minigame implements Listener {
      * 
      * @param player - The player to remove.
      */
-    public final void removePlayer(Player player) {
-        if (!players.contains(player))
+    @Override
+    public void removePlayer(Player player) {
+        if (!getPlayers().contains(player))
             return;
 
-        players.remove(player);
+        removePlayerFromList(player);
 
         var invSnapshot = inventorySnapshots.get(player);
         InventorySnapshot.apply(player, invSnapshot);
@@ -113,7 +105,7 @@ public abstract class Minigame implements Listener {
 
         MinigamesPlugin.logInfo("%s has left the minigame %s.", player.getName(), id.instanceName());
 
-        if (players.isEmpty() && isInstanced()) {
+        if (isEmptyPlayerList() && isInstanced()) {
             manager.endMinigame(this);
 
             var endEvent = new MinigameEndEvent(this);
@@ -121,35 +113,6 @@ public abstract class Minigame implements Listener {
 
             MinigamesPlugin.logInfo("Minigame %s has ended.", id.instanceName());
         }
-    }
-
-    /**
-     * Called whenever a player leaves the server. If this happens, we should remove
-     * them from the minigame properly.
-     * 
-     * @param e - The event.
-     */
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent e) {
-        removePlayer(e.getPlayer());
-    }
-
-    /**
-     * Gets the number of players currently in this minigame.
-     * 
-     * @return The number of players.
-     */
-    public int getSize() {
-        return players.size();
-    }
-
-    /**
-     * Gets a list of all players in this minigame. This list should not be edited.
-     * 
-     * @return The list of players in this minigame.
-     */
-    public List<Player> getPlayers() {
-        return players;
     }
 
     /**
@@ -229,26 +192,6 @@ public abstract class Minigame implements Listener {
      */
     protected TeamList getTeamList() {
         return teamList;
-    }
-
-    /**
-     * Gets the default team for this minigame.
-     * 
-     * @return The default team.
-     * @see #setDefaultTeam(Team)
-     */
-    protected Team getDefaultTeam() {
-        return defaultTeam;
-    }
-
-    /**
-     * Sets the default team for this minigame. All players who join this minigame
-     * will automatically be added to this team.
-     * 
-     * @param team - The default team.
-     */
-    protected void setDefaultTeam(Team team) {
-        defaultTeam = team;
     }
 
     @EventHandler

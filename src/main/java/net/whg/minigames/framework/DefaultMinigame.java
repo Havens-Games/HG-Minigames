@@ -1,9 +1,12 @@
 package net.whg.minigames.framework;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+
+import net.whg.minigames.framework.teams.Team;
 
 /**
  * A minigame configuration that allows for a pre-configured minigame, canceling
@@ -13,6 +16,7 @@ public abstract class DefaultMinigame extends Minigame {
     private boolean disableFoodLevel = true;
     private boolean disableBlockBreak = true;
     private boolean disableItemDrop = true;
+    private Team defaultTeam;
 
     /**
      * Sets whether or not food level changing should be disabled. This event is
@@ -92,5 +96,33 @@ public abstract class DefaultMinigame extends Minigame {
             return;
 
         e.setCancelled(true);
+    }
+
+    @Override
+    public void addPlayer(Player player) {
+        super.addPlayer(player);
+
+        if (defaultTeam != null)
+            defaultTeam.addPlayer(player);
+    }
+
+    /**
+     * Gets the default team for this minigame.
+     * 
+     * @return The default team.
+     * @see #setDefaultTeam(Team)
+     */
+    public Team getDefaultTeam() {
+        return defaultTeam;
+    }
+
+    /**
+     * Sets the default team for this minigame. All players who join this minigame
+     * will automatically be added to this team.
+     * 
+     * @param team - The default team.
+     */
+    protected void setDefaultTeam(Team team) {
+        defaultTeam = team;
     }
 }

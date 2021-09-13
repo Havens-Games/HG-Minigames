@@ -9,7 +9,7 @@ import net.whg.utils.player.CmdPlayer;
  * Thrown whenever a player tries to join a minigame while already part of
  * another minigame.
  */
-public class PlayerAlreadyInMinigameException extends Exception {
+public class PlayerAlreadyInMinigameException extends RuntimeException {
     private static final String CONSOLE_MESSAGE = "Cannot add player, %s, to minigame: %s. Already part of minigame: %s";
     private static final String PLAYER_MESSAGE = "You are already part of the minigame: %s!";
 
