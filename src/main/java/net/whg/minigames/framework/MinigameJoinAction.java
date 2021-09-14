@@ -1,11 +1,12 @@
 package net.whg.minigames.framework;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import net.whg.minigames.framework.exceptions.PlayerAlreadyInMinigameException;
+import net.whg.utils.cmdformat.CommandException;
 import net.whg.utils.cmdformat.Subcommand;
-import net.whg.utils.exceptions.CommandException;
-import net.whg.utils.exceptions.NoConsoleException;
-import net.whg.utils.exceptions.UnknownArgumentException;
-import net.whg.utils.player.CmdPlayer;
+import net.whg.utils.cmdformat.UnknownArgumentException;
 
 public class MinigameJoinAction extends Subcommand {
     private final MinigameManager minigameManager;
@@ -15,11 +16,8 @@ public class MinigameJoinAction extends Subcommand {
     }
 
     @Override
-    public void execute(CmdPlayer sender, String[] args) throws CommandException {
-        if (!sender.isPlayer())
-            throw new NoConsoleException("You must be a player to join a minigame!");
-
-        var player = sender.getPlayer();
+    public void execute(CommandSender sender, String[] args) throws CommandException {
+        var player = (Player) sender;
 
         var minigame = minigameManager.getMinigameFactory(args[0]);
         if (minigame == null)
@@ -54,6 +52,11 @@ public class MinigameJoinAction extends Subcommand {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public boolean requiresNoConsole() {
+        return true;
     }
 
     private Minigame getLobbyGame(String name) throws UnknownArgumentException {

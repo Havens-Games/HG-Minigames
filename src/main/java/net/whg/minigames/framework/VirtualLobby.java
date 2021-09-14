@@ -8,10 +8,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import net.whg.minigames.MinigamesPlugin;
 import net.whg.minigames.framework.exceptions.PlayerAlreadyInMinigameException;
 import net.whg.utils.StringUtils;
-import net.whg.utils.player.CmdPlayer;
+import net.whg.utils.WraithLib;
 
 /**
  * Contains a list of players that are waiting in a lobby for a game to start.
@@ -45,15 +44,14 @@ public class VirtualLobby implements Listener {
             return;
 
         lobby.add(player);
-        MinigamesPlugin.logInfo("%s has the joined the lobby for %s.", player.getName(), minigameName);
+        WraithLib.log.logInfo("%s has the joined the lobby for %s.", player.getName(), minigameName);
 
         if (shouldStart()) {
             var minigame = manager.initializeMinigame(minigameName);
             populateInstance(minigame);
         } else {
-            var sender = new CmdPlayer(player);
             var friendlyName = StringUtils.splitCamelCase(minigameName);
-            sender.sendConfirmation("You have joined the lobby for %s!", friendlyName);
+            WraithLib.log.sendMessage(player, "You have joined the lobby for %s!", friendlyName);
         }
     }
 
@@ -81,7 +79,7 @@ public class VirtualLobby implements Listener {
      * @param minigame - The minigame.
      */
     public void populateInstance(Minigame minigame) {
-        MinigamesPlugin.logInfo("Populating minigame instance for %s...", minigame.getID().instanceName());
+        WraithLib.log.logInfo("Populating minigame instance for %s...", minigame.getID().instanceName());
 
         while (!lobby.isEmpty() && minigame.getPlayerCount() < factory.getMaxPlayers()) {
             var player = lobby.remove(0);
@@ -90,7 +88,7 @@ public class VirtualLobby implements Listener {
                 currentMinigame.removePlayer(player);
 
             try {
-                MinigamesPlugin.logInfo("Added %s to minigame instance %s..", player.getName(),
+                WraithLib.log.logInfo("Added %s to minigame instance %s..", player.getName(),
                         minigame.getID().instanceName());
                 minigame.addPlayer(player);
             } catch (PlayerAlreadyInMinigameException e) {

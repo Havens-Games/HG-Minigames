@@ -4,9 +4,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 
-import net.whg.minigames.MinigamesPlugin;
 import net.whg.minigames.framework.AbstractPlayerManager;
 import net.whg.minigames.framework.events.LeaveMinigameEvent;
+import net.whg.utils.WraithLib;
 
 /**
  * A team is a collection of players that are working together towards a common
@@ -36,7 +36,7 @@ public abstract class Team extends AbstractPlayerManager {
         var event = new TeamJoinEvent(player, this);
         Bukkit.getPluginManager().callEvent(event);
 
-        MinigamesPlugin.logInfo("%s has joined the team %s.", player.getName(), getDisplayName());
+        WraithLib.log.logInfo("%s has joined the team %s.", player.getName(), getDisplayName());
     }
 
     /**
@@ -53,7 +53,7 @@ public abstract class Team extends AbstractPlayerManager {
         var event = new TeamLeaveEvent(player, this);
         Bukkit.getPluginManager().callEvent(event);
 
-        MinigamesPlugin.logInfo("%s has left the team %s.", player.getName(), getDisplayName());
+        WraithLib.log.logInfo("%s has left the team %s.", player.getName(), getDisplayName());
     }
 
     /**

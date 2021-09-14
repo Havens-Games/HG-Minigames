@@ -10,8 +10,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.joml.Vector3i;
 
-import net.whg.minigames.MinigamesPlugin;
 import net.whg.minigames.framework.arena.Arena;
 import net.whg.minigames.framework.events.ArenaCompletedEvent;
 import net.whg.minigames.framework.events.JoinMinigameEvent;
@@ -20,8 +20,8 @@ import net.whg.minigames.framework.events.MinigameEndEvent;
 import net.whg.minigames.framework.events.MinigameReadyEvent;
 import net.whg.minigames.framework.exceptions.PlayerAlreadyInMinigameException;
 import net.whg.minigames.framework.teams.TeamList;
-import net.whg.utils.math.Vec3;
-import net.whg.utils.player.InventorySnapshot;
+import net.whg.utils.WraithLib;
+import net.whg.utils.inventory.InventorySnapshot;
 
 /**
  * A minigame is a collection of event handlers that are enabled or disabled for
@@ -29,6 +29,20 @@ import net.whg.utils.player.InventorySnapshot;
  * or not.
  */
 public abstract class Minigame extends AbstractPlayerManager {
+    /**
+     * Checks if the given location is within the axis-aligned world bounds
+     * specified.
+     * 
+     * @param location - The location
+     * @param min      - The minimum world pos.
+     * @param max      - The maximum world pos.
+     * @return True if the location is in the given bounds. False otherwise.
+     */
+    private static boolean isInBounds(Location location, Vector3i min, Vector3i max) {
+        return location.getX() >= min.x && location.getX() < max.x && location.getY() >= min.y
+                && location.getY() < max.y && location.getZ() >= min.z && location.getZ() < max.z;
+    }
+
     private final Map<Player, InventorySnapshot> inventorySnapshots = new HashMap<>();
     private final TeamList teamList = new TeamList();
     private MinigameManager manager;
@@ -51,7 +65,7 @@ public abstract class Minigame extends AbstractPlayerManager {
         this.arena = arena;
         this.instanced = instanced;
 
-        MinigamesPlugin.logInfo("Minigame %s has been initialized.", id.instanceName());
+        WraithLib.log.logInfo("Minigame %s has been initialized.", id.instanceName());
     }
 
     /**
@@ -103,7 +117,7 @@ public abstract class Minigame extends AbstractPlayerManager {
         var event = new LeaveMinigameEvent(player, this);
         Bukkit.getPluginManager().callEvent(event);
 
-        MinigamesPlugin.logInfo("%s has left the minigame %s.", player.getName(), id.instanceName());
+        WraithLib.log.logInfo("%s has left the minigame %s.", player.getName(), id.instanceName());
 
         if (isEmptyPlayerList() && isInstanced()) {
             manager.endMinigame(this);
@@ -111,7 +125,7 @@ public abstract class Minigame extends AbstractPlayerManager {
             var endEvent = new MinigameEndEvent(this);
             Bukkit.getPluginManager().callEvent(endEvent);
 
-            MinigamesPlugin.logInfo("Minigame %s has ended.", id.instanceName());
+            WraithLib.log.logInfo("Minigame %s has ended.", id.instanceName());
         }
     }
 
@@ -157,19 +171,18 @@ public abstract class Minigame extends AbstractPlayerManager {
         var location = getArena().getLocation();
         var schematic = getArena().getSchematic();
         var world = location.getWorld();
-        var loc = new Vec3(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-        var offset = loc.subtract(schematic.getOrigin());
+        var offset = new Vector3i(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        offset.sub(schematic.getOrigin());
 
-        var min = schematic.getMinimumPoint().add(offset);
-        var max = schematic.getMaximumPoint().add(offset);
+        var min = schematic.getMinimumPoint().add(offset, new Vector3i());
+        var max = schematic.getMaximumPoint().add(offset, new Vector3i());
 
         for (var entity : world.getEntities()) {
             if (!(entity instanceof ArmorStand))
                 continue;
 
             var eLoc = entity.getLocation();
-            var entityPos = new Vec3(eLoc.getBlockX(), eLoc.getBlockY(), eLoc.getBlockZ());
-            if (!entityPos.isInBounds(min, max))
+            if (!isInBounds(eLoc, min, max))
                 continue;
 
             if (!entity.getName().equals(placeholder))
@@ -179,7 +192,7 @@ public abstract class Minigame extends AbstractPlayerManager {
             entity.remove();
         }
 
-        MinigamesPlugin.logInfo("Loaded %s placeholders for %s in the minigame %s.", list.size(), placeholder,
+        WraithLib.log.logInfo("Loaded %s placeholders for %s in the minigame %s.", list.size(), placeholder,
                 id.instanceName());
 
         return list;

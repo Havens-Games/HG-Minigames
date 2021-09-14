@@ -1,9 +1,10 @@
 package net.whg.minigames.framework.exceptions;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.whg.minigames.framework.Minigame;
-import net.whg.utils.player.CmdPlayer;
+import net.whg.utils.WraithLib;
 
 /**
  * Thrown whenever a player tries to join a minigame while already part of
@@ -38,7 +39,7 @@ public class PlayerAlreadyInMinigameException extends RuntimeException {
         return target;
     }
 
-    public void printToCommandSender(CmdPlayer sender) {
-        sender.sendError(PLAYER_MESSAGE, current.getID().getMinigameType());
+    public void printToCommandSender(CommandSender sender) {
+        WraithLib.log.sendError(sender, PLAYER_MESSAGE, current.getID().getMinigameType());
     }
 }

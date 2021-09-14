@@ -1,10 +1,12 @@
 package net.whg.minigames.framework;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import net.whg.utils.WraithLib;
+import net.whg.utils.cmdformat.CommandException;
+import net.whg.utils.cmdformat.CommandStateException;
 import net.whg.utils.cmdformat.Subcommand;
-import net.whg.utils.exceptions.CommandException;
-import net.whg.utils.exceptions.CommandStateException;
-import net.whg.utils.exceptions.NoConsoleException;
-import net.whg.utils.player.CmdPlayer;
 
 public class MinigameLeaveAction extends Subcommand {
     private final MinigameManager minigameManager;
@@ -14,17 +16,14 @@ public class MinigameLeaveAction extends Subcommand {
     }
 
     @Override
-    public void execute(CmdPlayer sender, String[] args) throws CommandException {
-        if (!sender.isPlayer())
-            throw new NoConsoleException("You must be a player to join a minigame!");
-
-        var player = sender.getPlayer();
+    public void execute(CommandSender sender, String[] args) throws CommandException {
+        var player = (Player) sender;
         var minigame = minigameManager.getCurrentMinigame(player);
         if (minigame == null)
             throw new CommandStateException("You are not in a minigame!");
 
         minigame.removePlayer(player);
-        sender.sendConfirmation("You have left %s.", minigame.getID().getMinigameType());
+        WraithLib.log.sendMessage(sender, "You have left %s.", minigame.getID().getMinigameType());
     }
 
     @Override
@@ -35,5 +34,10 @@ public class MinigameLeaveAction extends Subcommand {
     @Override
     public String getUsage() {
         return "";
+    }
+
+    @Override
+    public boolean requiresNoConsole() {
+        return true;
     }
 }
